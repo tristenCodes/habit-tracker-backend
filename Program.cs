@@ -1,14 +1,17 @@
+using HabitTrackerBackend.Helpers;
 using Microsoft.Data.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<SqliteConnection>(provider => {
+builder.Services.AddSingleton<SqliteConnection>(provider =>
+{
     var connection = new SqliteConnection("Data Source=:memory:;");
     connection.Open(); // Keep the connection open to retain the in-memory database
     return connection;
 });
+builder.Services.AddSingleton<DatabaseHelper>();
 
 var app = builder.Build();
 

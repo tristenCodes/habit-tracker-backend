@@ -1,5 +1,6 @@
+using HabitTrackerBackend.Handlers;
+using HabitTrackerBackend.Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
 
 namespace HabitTrackerBackend.Controllers
 {
@@ -7,35 +8,28 @@ namespace HabitTrackerBackend.Controllers
     [ApiController]
     public class HabitController : ControllerBase
     {
-        private readonly SqliteConnection _connection;
+        private readonly DatabaseHelper _dbHelper;
 
-        public HabitController(SqliteConnection connection)
+        public HabitController(DatabaseHelper dbHelper)
         {
-            _connection = connection;
+            _dbHelper = dbHelper;
         }
 
         [HttpGet]
-        public IActionResult GetAllHabits()
+        public IActionResult GetHabits()
         {
-            Object[] RowValues = new Object[10];
-            var createTable = _connection.CreateCommand();
-            createTable.CommandText =
-            @"CREATE TABLE IF NOT EXISTS TestTable (ID INTEGER PRIMARY KEY AUTOINCREMENT, HABIT_NAME TEXT, DATE TEXT, COMPLETED INTEGER);
-            INSERT INTO TestTable VALUES(1, 'mow the lawn', datetime(), 0);
-            INSERT INTO TestTable VALUES(2, 'mow the fridge', datetime(), 0);
-            ";
-            createTable.ExecuteNonQuery();
+            _dbHelper.InitializeTable();
+            _dbHelper.InsertHabit("Mow the lawn", 1);
+            _dbHelper.InsertHabit("Mow the fridge", 0);
 
-            var command = _connection.CreateCommand();
-            command.CommandText =
-            @"SELECT * FROM TestTable";
-            var reader = command.ExecuteReader();
-            if (reader.HasRows && reader.Read())
+            var reader = _dbHelper.QueryAllHabits();
+            while (reader.Read())
             {
-                reader.GetValues(RowValues);
-                return Ok(new { result = RowValues });
+                var tempArray = new Object[reader.FieldCount];
+                reader.GetValues(tempArray);
+                HabitHandler.PlaceHabitIntoListOfHabits(tempArray);
             }
-            return Ok(new { worked = false });
+            return Ok(HabitHandler.AllHabits);
         }
     }
 }
