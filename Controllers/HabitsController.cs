@@ -36,5 +36,21 @@ namespace HabitTrackerBackend.Controllers
 
             return Ok("Habit created successfully.");
         }
+
+        [HttpDelete]
+        public IActionResult DeleteHabit([FromQuery] int id)
+        {
+            try
+            {
+                _dbHelper.DeleteHabit(id);
+                return Ok($"Habit with ID {id} deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return NotFound($"Habit with ID {id} not found or could not be deleted.");
+            }
+        }
     }
+
+
 }

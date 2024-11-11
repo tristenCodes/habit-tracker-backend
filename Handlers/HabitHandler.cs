@@ -14,11 +14,12 @@ public static class HabitHandler
 
     private static Habit TranslateDataIntoHabit(Object[] arr)
     {
-        Habit habit = new Habit();
-        habit.ID = (long)arr[0];
-        habit.Name = (string)arr[1];
-        habit.Completed = (long)arr[2];
-        return habit;
+        return new Habit
+        {
+            ID = (long)arr[0],
+            Name = (string)arr[1],
+            Completed = (long)arr[2],
+        };
     }
 
     private static void AddHabitToListOfHabits(Habit habit)

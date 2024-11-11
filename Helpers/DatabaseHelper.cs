@@ -43,4 +43,12 @@ public class DatabaseHelper
         $"INSERT INTO Habits (HABIT_NAME, COMPLETED) VALUES ('{Name}', {Completed})";
         command.ExecuteNonQuery();
     }
+
+    public void DeleteHabit(long id)
+    {
+        var command = _connection.CreateCommand();
+        command.CommandText =
+        $"DELETE FROM Habits WHERE id = {id}";
+        command.ExecuteNonQuery();
+    }
 }
