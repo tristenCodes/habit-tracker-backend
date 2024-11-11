@@ -7,9 +7,10 @@ public class DatabaseHelper
     public DatabaseHelper(SqliteConnection connection)
     {
         _connection = connection;
+        InitializeTable();
     }
 
-    public void InitializeTable()
+    private void InitializeTable()
     {
         var command = _connection.CreateCommand();
         command.CommandText =

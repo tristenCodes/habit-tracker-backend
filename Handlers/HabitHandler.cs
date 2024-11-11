@@ -23,7 +23,14 @@ public static class HabitHandler
 
     private static void AddHabitToListOfHabits(Habit habit)
     {
+        if (HabitExistsInList(habit)) return;
         AllHabits.Add(habit);
+    }
+
+    private static bool HabitExistsInList(Habit habit)
+    {
+        var res = AllHabits.Where(h => h.ID == habit.ID);
+        return res.Any();
     }
 
 }

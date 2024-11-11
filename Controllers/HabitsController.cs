@@ -1,16 +1,17 @@
 using HabitTrackerBackend.Handlers;
 using HabitTrackerBackend.Helpers;
+using HabitTrackerBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HabitTrackerBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HabitController : ControllerBase
+    public class HabitsController : ControllerBase
     {
         private readonly DatabaseHelper _dbHelper;
 
-        public HabitController(DatabaseHelper dbHelper)
+        public HabitsController(DatabaseHelper dbHelper)
         {
             _dbHelper = dbHelper;
         }
@@ -18,10 +19,6 @@ namespace HabitTrackerBackend.Controllers
         [HttpGet]
         public IActionResult GetHabits()
         {
-            _dbHelper.InitializeTable();
-            _dbHelper.InsertHabit("Mow the lawn", 1);
-            _dbHelper.InsertHabit("Mow the fridge", 0);
-
             var reader = _dbHelper.QueryAllHabits();
             while (reader.Read())
             {
@@ -30,6 +27,14 @@ namespace HabitTrackerBackend.Controllers
                 HabitHandler.PlaceHabitIntoListOfHabits(tempArray);
             }
             return Ok(HabitHandler.AllHabits);
+        }
+
+        [HttpPost]
+        public IActionResult CreateHabit([FromBody] Habit habit)
+        {
+            _dbHelper.InsertHabit(habit.Name, habit.Completed);
+
+            return Ok("Habit created successfully.");
         }
     }
 }
