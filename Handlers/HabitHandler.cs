@@ -5,14 +5,8 @@ namespace HabitTrackerBackend.Handlers;
 public static class HabitHandler
 {
     public static List<Habit> AllHabits { get; set; } = [];
-
-    public static void PlaceHabitIntoListOfHabits(Object[] arr)
-    {
-        var habit = TranslateDataIntoHabit(arr);
-        AddHabitToListOfHabits(habit);
-    }
-
-    private static Habit TranslateDataIntoHabit(Object[] arr)
+    
+    public static Habit TranslateDataIntoHabit(Object[] arr)
     {
         return new Habit
         {

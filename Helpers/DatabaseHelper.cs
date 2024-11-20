@@ -44,13 +44,12 @@ public class DatabaseHelper
         command.ExecuteNonQuery();
     }
 
-    public void DeleteHabit(long id)
+    public string DeleteHabit(long id)
     {
         var command = _connection.CreateCommand();
         command.CommandText = $"DELETE FROM Habits WHERE id = {id}";
-
-        // Debug logging
+        
         var rowsAffected = command.ExecuteNonQuery();
-        Console.WriteLine($"Rows affected: {rowsAffected}");
+        return "Rows affected: " + rowsAffected;
     }
 }

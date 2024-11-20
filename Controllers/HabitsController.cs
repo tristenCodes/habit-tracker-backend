@@ -19,14 +19,17 @@ namespace HabitTrackerBackend.Controllers
         [HttpGet]
         public IActionResult GetHabits()
         {
+            var habits = new List<Habit>();
             var reader = _dbHelper.QueryAllHabits();
             while (reader.Read())
             {
                 var tempArray = new Object[reader.FieldCount];
                 reader.GetValues(tempArray);
-                HabitHandler.PlaceHabitIntoListOfHabits(tempArray);
+                var habit = HabitHandler.TranslateDataIntoHabit(tempArray);
+                habits.Add(habit);
             }
-            return Ok(HabitHandler.AllHabits);
+
+            return Ok(habits);
         }
 
         [HttpGet("{id}")]
@@ -35,11 +38,12 @@ namespace HabitTrackerBackend.Controllers
             var reader = _dbHelper.QueryHabit(id);
             if (reader.Read())
             {
-                object[] values = new object[reader.FieldCount];
+                var values = new object[reader.FieldCount];
                 reader.GetValues(values);
                 var result = new { id = values[0], name = values[1], completed = values[2] };
                 return Ok(result);
             }
+
             return NotFound($"Habit ID {id} not found in database");
         }
 
@@ -47,25 +51,20 @@ namespace HabitTrackerBackend.Controllers
         public IActionResult CreateHabit([FromBody] Habit habit)
         {
             _dbHelper.InsertHabit(habit.Name, habit.Completed);
+            var result = new
+            {
+                Result = "Success. Habit created.",
+                Habit = new { habit.Name, habit.Completed }
+            };
 
-            return Ok("Habit created successfully.");
+            return Ok(result);
         }
 
-        [HttpDelete]
-        public IActionResult DeleteHabit([FromQuery] int id)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteHabit(int id)
         {
-            try
-            {
-                _dbHelper.DeleteHabit(id);
-                return Ok($"Habit with ID {id} deleted successfully.");
-            }
-
-            catch
-            {
-                return NotFound($"Habit with ID {id} not found or could not be deleted.");
-            }
+            var result = _dbHelper.DeleteHabit(id);
+            return Ok(result);
         }
     }
-
-
 }
