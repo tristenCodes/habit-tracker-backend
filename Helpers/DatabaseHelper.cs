@@ -31,7 +31,7 @@ public class DatabaseHelper
     public SqliteDataReader QueryHabit(long id)
     {
         var command = _connection.CreateCommand();
-        command.CommandText = $"SELECT * FROM Habits WHERE {id}";
+        command.CommandText = $"SELECT * FROM Habits WHERE id = {id}";
         var reader = command.ExecuteReader();
         return reader;
     }
@@ -47,8 +47,10 @@ public class DatabaseHelper
     public void DeleteHabit(long id)
     {
         var command = _connection.CreateCommand();
-        command.CommandText =
-        $"DELETE FROM Habits WHERE id = {id}";
-        command.ExecuteNonQuery();
+        command.CommandText = $"DELETE FROM Habits WHERE id = {id}";
+
+        // Debug logging
+        var rowsAffected = command.ExecuteNonQuery();
+        Console.WriteLine($"Rows affected: {rowsAffected}");
     }
 }

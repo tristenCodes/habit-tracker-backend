@@ -29,6 +29,20 @@ namespace HabitTrackerBackend.Controllers
             return Ok(HabitHandler.AllHabits);
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetHabit(int id)
+        {
+            var reader = _dbHelper.QueryHabit(id);
+            if (reader.Read())
+            {
+                object[] values = new object[reader.FieldCount];
+                reader.GetValues(values);
+                var result = new { id = values[0], name = values[1], completed = values[2] };
+                return Ok(result);
+            }
+            return NotFound($"Habit ID {id} not found in database");
+        }
+
         [HttpPost]
         public IActionResult CreateHabit([FromBody] Habit habit)
         {
@@ -45,7 +59,8 @@ namespace HabitTrackerBackend.Controllers
                 _dbHelper.DeleteHabit(id);
                 return Ok($"Habit with ID {id} deleted successfully.");
             }
-            catch (Exception ex)
+
+            catch
             {
                 return NotFound($"Habit with ID {id} not found or could not be deleted.");
             }
