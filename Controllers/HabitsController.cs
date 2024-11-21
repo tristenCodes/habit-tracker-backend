@@ -7,20 +7,13 @@ namespace HabitTrackerBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HabitsController : ControllerBase
+    public class HabitsController(DatabaseHelper dbHelper) : ControllerBase
     {
-        private readonly DatabaseHelper _dbHelper;
-
-        public HabitsController(DatabaseHelper dbHelper)
-        {
-            _dbHelper = dbHelper;
-        }
-
         [HttpGet]
         public IActionResult GetHabits()
         {
             var habits = new List<Habit>();
-            var reader = _dbHelper.QueryAllHabits();
+            var reader = dbHelper.QueryAllHabits();
             while (reader.Read())
             {
                 var tempArray = new Object[reader.FieldCount];
@@ -35,7 +28,7 @@ namespace HabitTrackerBackend.Controllers
         [HttpGet("{id}")]
         public IActionResult GetHabit(int id)
         {
-            var reader = _dbHelper.QueryHabit(id);
+            var reader = dbHelper.QueryHabit(id);
             if (reader.Read())
             {
                 var values = new object[reader.FieldCount];
@@ -50,7 +43,7 @@ namespace HabitTrackerBackend.Controllers
         [HttpPost]
         public IActionResult CreateHabit([FromBody] Habit habit)
         {
-            _dbHelper.InsertHabit(habit.Name, habit.Completed);
+            dbHelper.InsertHabit(habit.Name, habit.Completed);
             var result = new
             {
                 Result = "Success. Habit created.",
@@ -63,7 +56,7 @@ namespace HabitTrackerBackend.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteHabit(int id)
         {
-            var result = _dbHelper.DeleteHabit(id);
+            var result = dbHelper.DeleteHabit(id);
             return Ok(result);
         }
     }
